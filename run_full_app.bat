@@ -1,5 +1,5 @@
 @echo off
-echo Starting ISL Prediction App (Full Alphabet)...
+echo Starting SAARAM - Sign Language ^& Emotion Recognition...
 call venv\Scripts\activate
-python final_pred_full.py
+python app_gui.py
 pause

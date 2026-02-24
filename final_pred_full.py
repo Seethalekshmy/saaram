@@ -15,6 +15,8 @@ except ImportError:
     nlp_process = lambda x: x
     speak = lambda x, y: print(f"SPEAK: {x} ({y})")
 
+from emotion_detector import EmotionDetector
+
 
 MODEL_PATH = "cnn26_model.h5"
 labels = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ") 
@@ -23,16 +25,7 @@ INPUT_SIZE = 400
 OFFSET = 15
 
 
-ISL_WORDS = {
-    'A': 'Hello',
-    'B': 'Thank you',
-    'C': 'Yes',
-    'D': 'No',
-    'E': 'Please',
-    'F': 'Help',
-    'G': 'Water',
-    'H': 'Food'
-}
+# No ISL_WORDS mapping - use raw letters for NLP sentence building
 
 try:
     import mediapipe.python.solutions as mp_solutions
@@ -78,6 +71,8 @@ except Exception as e:
     print(f"Error loading model {MODEL_PATH}: {e}")
     exit()
 
+# Initialize Emotion Detector (face-based)
+emotion_detector = EmotionDetector(model_path="emotion_model.h5", skip_frames=3)
 
 cap = cv2.VideoCapture(0)
 
@@ -85,6 +80,7 @@ pred_queue = deque(maxlen=15)
 sentence = ""
 last_word = ""
 emotion = "Neutral"
+face_bbox = None
 
 while True:
     try:
@@ -96,6 +92,16 @@ while True:
         frame = cv2.flip(frame, 1)
         h_frame, w_frame, _ = frame.shape
         img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        
+        # --- FACE EMOTION DETECTION ---
+        emotion, face_bbox = emotion_detector.detect(img_rgb, frame)
+        
+        # Draw face ROI box (cyan)
+        if face_bbox:
+            fx, fy, fw, fh = face_bbox
+            cv2.rectangle(frame, (fx, fy), (fx + fw, fy + fh), (255, 255, 0), 2)
+            cv2.putText(frame, emotion, (fx, fy - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 0), 2)
         
         
         results = hands_detector.process(img_rgb)
@@ -173,10 +179,9 @@ while True:
                     
                     pred_queue.append(symbol)
                     if pred_queue.count(symbol) > 10:
-                        word = ISL_WORDS.get(symbol, symbol)
-                        if word != last_word:
-                            sentence += word + " "
-                            last_word = word
+                        if symbol != last_word:
+                            sentence += symbol
+                            last_word = symbol
                             
         
         cv2.putText(frame, f"Symbol: {symbol}", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
@@ -198,14 +203,10 @@ while True:
             except Exception as e:
                 print(f"TTS Error: {e}")
         
-        elif key == ord('0'): emotion = "Neutral"
-        elif key == ord('1'): emotion = "Happy"
-        elif key == ord('2'): emotion = "Sad"
-        elif key == ord('3'): emotion = "Angry"
-        
     except Exception:
         traceback.print_exc()
         break
         
 cap.release()
+emotion_detector.release()
 cv2.destroyAllWindows()
