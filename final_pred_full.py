@@ -1,0 +1,212 @@
+import cv2
+import numpy as np
+import tensorflow as tf
+import mediapipe as mp
+from collections import deque
+import traceback
+import math
+
+
+try:
+    from nlp_module import nlp_process
+    from emotion_tts import speak
+except ImportError:
+    print("Warning: nlp_module or emotion_tts not found. Disabling NLP/TTS.")
+    nlp_process = lambda x: x
+    speak = lambda x, y: print(f"SPEAK: {x} ({y})")
+
+from emotion_detector import EmotionDetector
+
+
+MODEL_PATH = "cnn26_model.h5"
+labels = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ") 
+IMG_SIZE = 400 
+INPUT_SIZE = 400 
+OFFSET = 15
+
+
+# No ISL_WORDS mapping - use raw letters for NLP sentence building
+
+try:
+    import mediapipe.python.solutions as mp_solutions
+    mp_hands = mp_solutions.hands
+    mp_drawing = mp_solutions.drawing_utils
+except ImportError:
+    mp_hands = mp.solutions.hands
+    mp_drawing = mp.solutions.drawing_utils
+
+hands_detector = mp_hands.Hands(
+    static_image_mode=False,
+    max_num_hands=1,
+    min_detection_confidence=0.5,
+    min_tracking_confidence=0.5
+)
+
+hands_detector_crop = mp_hands.Hands(
+    static_image_mode=False,
+    max_num_hands=1,
+    min_detection_confidence=0.5,
+    min_tracking_confidence=0.5
+)
+
+
+def get_bbox(landmarks, img_w, img_h):
+    x_min, y_min = img_w, img_h
+    x_max, y_max = 0, 0
+    for lm in landmarks:
+        x, y = int(lm.x * img_w), int(lm.y * img_h)
+        if x < x_min: x_min = x
+        if x > x_max: x_max = x
+        if y < y_min: y_min = y
+        if y > y_max: y_max = y
+    w = x_max - x_min
+    h = y_max - y_min
+    return x_min, y_min, w, h
+    
+
+try:
+    model = tf.keras.models.load_model(MODEL_PATH)
+    print(f"Model {MODEL_PATH} loaded.")
+except Exception as e:
+    print(f"Error loading model {MODEL_PATH}: {e}")
+    exit()
+
+# Initialize Emotion Detector (face-based)
+emotion_detector = EmotionDetector(model_path="emotion_model.h5", skip_frames=3)
+
+cap = cv2.VideoCapture(0)
+
+pred_queue = deque(maxlen=15)
+sentence = ""
+last_word = ""
+emotion = "Neutral"
+face_bbox = None
+
+while True:
+    try:
+        ret, frame = cap.read()
+        if not ret:
+            print("Camera error")
+            break
+            
+        frame = cv2.flip(frame, 1)
+        h_frame, w_frame, _ = frame.shape
+        img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        
+        # --- FACE EMOTION DETECTION ---
+        emotion, face_bbox = emotion_detector.detect(img_rgb, frame)
+        
+        # Draw face ROI box (cyan)
+        if face_bbox:
+            fx, fy, fw, fh = face_bbox
+            cv2.rectangle(frame, (fx, fy), (fx + fw, fy + fh), (255, 255, 0), 2)
+            cv2.putText(frame, emotion, (fx, fy - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 0), 2)
+        
+        
+        results = hands_detector.process(img_rgb)
+        
+        symbol = ""
+        
+        if results.multi_hand_landmarks:
+            hand_lms = results.multi_hand_landmarks[0]
+            x, y, w, h = get_bbox(hand_lms.landmark, w_frame, h_frame)
+            
+            
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 255), 2)
+            
+           
+            y1, y2 = max(0, y - OFFSET), min(h_frame, y + h + OFFSET)
+            x1, x2 = max(0, x - OFFSET), min(w_frame, x + w + OFFSET)
+            
+            img_crop = frame[y1:y2, x1:x2]
+            
+            if img_crop.size > 0:
+                img_crop_rgb = cv2.cvtColor(img_crop, cv2.COLOR_BGR2RGB)
+                h_crop, w_crop, _ = img_crop.shape
+                
+                
+                results_crop = hands_detector_crop.process(img_crop_rgb)
+                
+                if results_crop.multi_hand_landmarks:
+                    hand_lms_crop = results_crop.multi_hand_landmarks[0]
+                    
+                    
+                    white = np.ones((IMG_SIZE, IMG_SIZE, 3), np.uint8) * 255
+                    
+                    
+                    os_x = ((IMG_SIZE - w) // 2) - 15
+                    os_y = ((IMG_SIZE - h) // 2) - 15
+                    
+                    
+                    pts = []
+                    for lm in hand_lms_crop.landmark:
+                        px, py = int(lm.x * w_crop), int(lm.y * h_crop)
+                        pts.append([px, py])
+                    
+                    
+                    custom_connections = [
+                        (0, 1), (1, 2), (2, 3), (3, 4),
+                        (5, 6), (6, 7), (7, 8),
+                        (9, 10), (10, 11), (11, 12),
+                        (13, 14), (14, 15), (15, 16),
+                        (17, 18), (18, 19), (19, 20),
+                        (5, 9), (9, 13), (13, 17),
+                        (0, 5), (0, 17)
+                    ]
+                    
+                    for p1, p2 in custom_connections:
+                        if p1 < len(pts) and p2 < len(pts):
+                            x1_l, y1_l = pts[p1][0] + os_x, pts[p1][1] + os_y
+                            x2_l, y2_l = pts[p2][0] + os_x, pts[p2][1] + os_y
+                            cv2.line(white, (x1_l, y1_l), (x2_l, y2_l), (0, 255, 0), 3)
+                        
+                    for i in range(21):
+                        if i < len(pts):
+                            cx, cy = pts[i][0] + os_x, pts[i][1] + os_y
+                            cv2.circle(white, (cx, cy), 2, (0, 0, 255), 1)
+                        
+                    
+                    cv2.imshow("Skeleton", white)
+                    
+                    
+                    img_resize = cv2.resize(white, (INPUT_SIZE, INPUT_SIZE))
+                    img_final = img_resize.reshape(1, INPUT_SIZE, INPUT_SIZE, 3)
+                    pred = model.predict(img_final, verbose=0)
+                    idx = np.argmax(pred)
+                    symbol = labels[idx]
+                    
+                    
+                    pred_queue.append(symbol)
+                    if pred_queue.count(symbol) > 10:
+                        if symbol != last_word:
+                            sentence += symbol
+                            last_word = symbol
+                            
+        
+        cv2.putText(frame, f"Symbol: {symbol}", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.putText(frame, f"Sentence: {sentence}", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
+        cv2.putText(frame, f"Emotion: {emotion}", (10, 450), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+        cv2.imshow("Frame", frame)
+        
+        
+        key = cv2.waitKey(1) & 0xFF
+        if key == 27: # ESC
+            break
+        elif key == ord('c'):
+            sentence = ""
+            last_word = ""
+        elif key == ord('s'):
+            try:
+                final_text = nlp_process(sentence)
+                speak(final_text, emotion)
+            except Exception as e:
+                print(f"TTS Error: {e}")
+        
+    except Exception:
+        traceback.print_exc()
+        break
+        
+cap.release()
+emotion_detector.release()
+cv2.destroyAllWindows()
