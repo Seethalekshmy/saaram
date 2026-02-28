@@ -127,19 +127,19 @@ svg {
 
 /* Section headings */
 .section-title {
-  font-size: clamp(1.9rem, 4vw, 2.8rem);
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
   font-weight: 800;
-  line-height: 1.18;
+  line-height: 1.15;
   letter-spacing: -0.025em;
   color: var(--text-heading);
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .section-subtitle {
-  font-size: 1rem;
+  font-size: clamp(0.95rem, 2vw, 1.05rem);
   color: var(--text-body);
   max-width: 540px;
-  line-height: 1.75;
+  line-height: 1.7;
 }
 
 /* Gradient accent text */
@@ -411,8 +411,8 @@ svg {
 }
 
 .hero-desc {
-  font-size: 1.05rem;
-  line-height: 1.82;
+  font-size: clamp(1rem, 2vw, 1.1rem);
+  line-height: 1.75;
   color: var(--text-body);
   max-width: 500px;
 }
@@ -427,11 +427,14 @@ svg {
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 13px 26px;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 28px;
+  min-height: 48px;
+  /* Touch target optimization */
   border-radius: var(--radius-md);
   font-family: var(--font-sans);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   border: none;
@@ -1262,7 +1265,7 @@ svg {
 
   .steps-container {
     grid-template-columns: repeat(2, 1fr);
-    gap: 36px;
+    gap: 32px;
   }
 
   .steps-container::before {
@@ -1271,22 +1274,25 @@ svg {
 
   .demo-ui {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .demo-feed {
-    border-right: none;
-    border-bottom: 1px solid var(--bg-border);
-    min-height: 240px;
+    min-height: 320px;
   }
 }
 
 @media (max-width: 768px) {
+  .container {
+    padding: 0 24px;
+  }
+
   .hero-content {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 48px;
     text-align: center;
-    padding-top: 96px;
-    padding-bottom: 64px;
+    padding-top: 100px;
+    padding-bottom: 60px;
   }
 
   .hero-text {
@@ -1299,10 +1305,19 @@ svg {
 
   .hero-actions {
     justify-content: center;
+    width: 100%;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+    /* Full width buttons on mobile */
+    max-width: 320px;
   }
 
   .hero-stats {
-    justify-content: center;
+    width: 100%;
+    justify-content: space-around;
+    gap: 16px;
   }
 
   .hero-visual {
@@ -1310,10 +1325,9 @@ svg {
   }
 
   .hero-image-wrapper {
-    max-width: 300px;
+    max-width: 320px;
   }
 
-  /* Mobile menu drawer */
   .nav-links {
     display: none;
     position: absolute;
@@ -1321,11 +1335,13 @@ svg {
     left: 0;
     right: 0;
     flex-direction: column;
-    background: rgba(10, 10, 20, 0.96);
+    background: rgba(10, 10, 20, 0.98);
     backdrop-filter: blur(24px);
-    padding: 20px 28px;
-    gap: 18px;
+    padding: 32px 24px;
+    gap: 24px;
     border-bottom: 1px solid var(--bg-border);
+    max-height: calc(100vh - 68px);
+    overflow-y: auto;
   }
 
   .nav-links.open {
@@ -1333,7 +1349,9 @@ svg {
   }
 
   .nav-toggle {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .features-grid {
@@ -1345,29 +1363,35 @@ svg {
   }
 
   .tech-grid {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   }
 
-  .section-title {
-    font-size: clamp(1.7rem, 5vw, 2.4rem);
+  .demo-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .demo-btn {
+    width: 100%;
+    padding: 12px;
   }
 }
 
 @media (max-width: 480px) {
-  .container {
-    padding: 0 18px;
-  }
-
-  .btn {
-    padding: 12px 22px;
-    font-size: 0.875rem;
-  }
-
   .hero-stats {
-    gap: 18px;
+    flex-direction: column;
+    gap: 24px;
   }
 
   .hero-stat-divider {
-    height: 28px;
+    display: none;
+  }
+
+  .hero-stat {
+    align-items: center;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
   }
 }
