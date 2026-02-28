@@ -1,46 +1,50 @@
-/* ══════════════════════════════════════════════
-   SAARAM — Interactive Scripts
-   Particles · Scroll Reveal · Navigation · Counters
-   ══════════════════════════════════════════════ */
+/*
+  SAARAM — Interactive Scripts
+  Handles: particles, scroll reveal, navbar, counters, demo animations
+*/
 
 (function () {
   'use strict';
 
-  // ─── Particle System ───
+  // -----------------------------------------------------------------------
+  // Particle canvas in the hero section
+  // Creates floating dots that slowly drift and connect with lines nearby
+  // -----------------------------------------------------------------------
   const canvas = document.getElementById('particles-canvas');
+
   if (canvas) {
     const ctx = canvas.getContext('2d');
     let particles = [];
-    let animId;
 
     function resize() {
-      const hero = canvas.parentElement;
-      canvas.width = hero.offsetWidth;
-      canvas.height = hero.offsetHeight;
+      canvas.width = canvas.parentElement.offsetWidth;
+      canvas.height = canvas.parentElement.offsetHeight;
     }
 
-    function createParticles() {
+    function spawnParticles() {
       particles = [];
-      const count = Math.floor((canvas.width * canvas.height) / 12000);
+      const count = Math.floor((canvas.width * canvas.height) / 13000);
+
       for (let i = 0; i < count; i++) {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          r: Math.random() * 2 + 0.5,
-          dx: (Math.random() - 0.5) * 0.4,
-          dy: (Math.random() - 0.5) * 0.4,
-          alpha: Math.random() * 0.5 + 0.1,
+          r: Math.random() * 1.8 + 0.4,
+          dx: (Math.random() - 0.5) * 0.35,
+          dy: (Math.random() - 0.5) * 0.35,
+          alpha: Math.random() * 0.45 + 0.08,
         });
       }
     }
 
-    function drawParticles() {
+    function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Move and wrap each particle around the canvas edges
       particles.forEach((p) => {
         p.x += p.dx;
         p.y += p.dy;
 
-        // Wrap around edges
         if (p.x < 0) p.x = canvas.width;
         if (p.x > canvas.width) p.x = 0;
         if (p.y < 0) p.y = canvas.height;
@@ -52,38 +56,44 @@
         ctx.fill();
       });
 
-      // Draw connections
+      // Draw faint connecting lines between nearby particles
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
+
+          if (dist < 110) {
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(124, 58, 237, ${0.08 * (1 - dist / 120)})`;
+            ctx.strokeStyle = `rgba(124, 58, 237, ${0.07 * (1 - dist / 110)})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
         }
       }
 
-      animId = requestAnimationFrame(drawParticles);
+      requestAnimationFrame(draw);
     }
 
     resize();
-    createParticles();
-    drawParticles();
+    spawnParticles();
+    draw();
 
     window.addEventListener('resize', () => {
       resize();
-      createParticles();
+      spawnParticles();
     });
   }
 
-  // ─── Scroll Reveal ───
-  const revealElements = document.querySelectorAll('.reveal');
+
+  // -----------------------------------------------------------------------
+  // Scroll Reveal
+  // Elements with class .reveal fade in as they enter the viewport
+  // -----------------------------------------------------------------------
+  const revealEls = document.querySelectorAll('.reveal');
+
   const revealObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -95,19 +105,38 @@
     },
     { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
   );
-  revealElements.forEach((el) => revealObserver.observe(el));
 
-  // ─── Navbar scroll styling ───
+  revealEls.forEach((el) => revealObserver.observe(el));
+
+  // Add a small stagger delay to groups of cards so they don't all pop in together
+  document.querySelectorAll('.feature-card.reveal').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.10}s`;
+  });
+
+  document.querySelectorAll('.step-card.reveal').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.12}s`;
+  });
+
+  document.querySelectorAll('.tech-card.reveal').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.06}s`;
+  });
+
+
+  // -----------------------------------------------------------------------
+  // Navbar — add background blur once the user scrolls past the hero
+  // -----------------------------------------------------------------------
   const navbar = document.getElementById('navbar');
   const backToTop = document.getElementById('backToTop');
 
   window.addEventListener('scroll', () => {
-    const scrolled = window.scrollY > 60;
-    navbar.classList.toggle('scrolled', scrolled);
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
     backToTop.classList.toggle('visible', window.scrollY > 500);
   });
 
-  // ─── Mobile nav toggle ───
+
+  // -----------------------------------------------------------------------
+  // Mobile nav toggle — hamburger open/close
+  // -----------------------------------------------------------------------
   const navToggle = document.getElementById('navToggle');
   const navLinks = document.getElementById('navLinks');
 
@@ -116,28 +145,32 @@
       navLinks.classList.toggle('open');
     });
 
-    // Close mobile menu when a link is clicked
+    // Close the menu when the user taps a link
     navLinks.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => {
-        navLinks.classList.remove('open');
-      });
+      link.addEventListener('click', () => navLinks.classList.remove('open'));
     });
   }
 
-  // ─── Back to top ───
+
+  // -----------------------------------------------------------------------
+  // Back to top button
+  // -----------------------------------------------------------------------
   if (backToTop) {
     backToTop.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
 
-  // ─── Counter Animation (Hero Stats) ───
+
+  // -----------------------------------------------------------------------
+  // Hero stat counters — animate numbers up when the hero section is visible
+  // -----------------------------------------------------------------------
   const counters = document.querySelectorAll('[data-count]');
-  let countersDone = false;
+  let countersFired = false;
 
   function animateCounters() {
-    if (countersDone) return;
-    countersDone = true;
+    if (countersFired) return;
+    countersFired = true;
 
     counters.forEach((el) => {
       const target = parseInt(el.dataset.count, 10);
@@ -145,54 +178,60 @@
       const duration = 1800;
       const start = performance.now();
 
-      function step(now) {
-        const elapsed = now - start;
-        const progress = Math.min(elapsed / duration, 1);
-        // Ease-out cubic
-        const eased = 1 - Math.pow(1 - progress, 3);
-        const current = Math.round(eased * target);
-        el.textContent = current + suffix;
-        if (progress < 1) requestAnimationFrame(step);
+      function tick(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+        el.textContent = Math.round(eased * target) + suffix;
+        if (progress < 1) requestAnimationFrame(tick);
       }
 
-      requestAnimationFrame(step);
+      requestAnimationFrame(tick);
     });
   }
 
-  // Trigger counters when hero is visible
-  const heroObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
+  const heroSection = document.getElementById('hero');
+  if (heroSection) {
+    const heroObserver = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
           animateCounters();
           heroObserver.disconnect();
         }
-      });
-    },
-    { threshold: 0.3 }
-  );
-  const heroSection = document.getElementById('hero');
-  if (heroSection) heroObserver.observe(heroSection);
+      },
+      { threshold: 0.3 }
+    );
+    heroObserver.observe(heroSection);
+  }
 
-  // ─── Demo Section — Letter Cycling ───
+
+  // -----------------------------------------------------------------------
+  // Demo section — cycle through ISL letters every 2 seconds
+  // -----------------------------------------------------------------------
   const demoLetter = document.getElementById('demoLetter');
-  const demoSentence = document.getElementById('demoSentence');
 
   if (demoLetter) {
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    let idx = 0;
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let letterIndex = 0;
+
     setInterval(() => {
-      idx = (idx + 1) % letters.length;
-      demoLetter.textContent = letters[idx];
+      letterIndex = (letterIndex + 1) % alphabet.length;
+      demoLetter.textContent = alphabet[letterIndex];
+
+      // Small pop animation on change
       demoLetter.style.transform = 'scale(1.2)';
       setTimeout(() => {
-        demoLetter.style.transition = 'transform 0.3s';
+        demoLetter.style.transition = 'transform 0.25s ease';
         demoLetter.style.transform = 'scale(1)';
-      }, 150);
+      }, 120);
     }, 2000);
   }
 
-  // ─── Demo Sentence Typing Effect ───
+
+  // -----------------------------------------------------------------------
+  // Demo section — typewriter effect cycling through example sentences
+  // -----------------------------------------------------------------------
+  const demoSentence = document.getElementById('demoSentence');
+
   if (demoSentence) {
     const phrases = [
       'Hello world',
@@ -201,57 +240,37 @@
       'Nice to meet you',
       'Good morning',
     ];
-    let phraseIdx = 0;
-    let charIdx = 0;
+
+    let phraseIndex = 0;
+    let charIndex = 0;
     let isDeleting = false;
 
-    function typeSentence() {
-      const currentPhrase = phrases[phraseIdx];
+    function type() {
+      const phrase = phrases[phraseIndex];
 
       if (!isDeleting) {
-        charIdx++;
-        if (charIdx > currentPhrase.length) {
-          setTimeout(() => {
-            isDeleting = true;
-            typeSentence();
-          }, 2000);
+        charIndex++;
+        if (charIndex > phrase.length) {
+          // Pause at the end before deleting
+          setTimeout(() => { isDeleting = true; type(); }, 2000);
           return;
         }
       } else {
-        charIdx--;
-        if (charIdx < 0) {
-          charIdx = 0;
+        charIndex--;
+        if (charIndex < 0) {
+          charIndex = 0;
           isDeleting = false;
-          phraseIdx = (phraseIdx + 1) % phrases.length;
+          phraseIndex = (phraseIndex + 1) % phrases.length;
         }
       }
 
       demoSentence.innerHTML =
-        currentPhrase.substring(0, charIdx) + '<span class="cursor"></span>';
+        phrase.substring(0, charIndex) + '<span class="cursor"></span>';
 
-      const speed = isDeleting ? 50 : 80;
-      setTimeout(typeSentence, speed);
+      setTimeout(type, isDeleting ? 45 : 75);
     }
 
-    // Start after a short delay
-    setTimeout(typeSentence, 1500);
+    setTimeout(type, 1400);
   }
 
-  // ─── Feature card staggered reveal ───
-  const featureCards = document.querySelectorAll('.feature-card.reveal');
-  featureCards.forEach((card, i) => {
-    card.style.transitionDelay = `${i * 0.1}s`;
-  });
-
-  // Step cards staggered reveal
-  const stepCards = document.querySelectorAll('.step-card.reveal');
-  stepCards.forEach((card, i) => {
-    card.style.transitionDelay = `${i * 0.12}s`;
-  });
-
-  // Tech cards staggered reveal
-  const techCards = document.querySelectorAll('.tech-card.reveal');
-  techCards.forEach((card, i) => {
-    card.style.transitionDelay = `${i * 0.06}s`;
-  });
 })();

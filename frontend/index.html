@@ -1,30 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SAARAM — Sign Language & Emotion Recognition System</title>
-  <meta name="description" content="SAARAM bridges communication gaps through real-time sign language recognition, emotion detection, intelligent NLP, and emotion-aware text-to-speech." />
+  <meta name="description"
+    content="SAARAM bridges communication gaps through real-time sign language recognition, emotion detection, intelligent NLP, and emotion-aware text-to-speech." />
   <meta property="og:title" content="SAARAM — Sign Language & Emotion Recognition System" />
   <meta property="og:description" content="Bridging Communication Through Sign Language & Emotion Recognition" />
   <meta property="og:type" content="website" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤟</text></svg>" />
   <link rel="stylesheet" href="index.css" />
 </head>
+
 <body>
 
-  <!-- ═══════ NAVBAR ═══════ -->
+  <!-- Navbar -->
   <nav class="navbar" id="navbar">
     <div class="navbar-inner">
       <a href="#" class="nav-logo">
-        <span class="logo-icon">🤟</span>
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M6.5 3.5a1 1 0 0 1 2 0v5a1 1 0 0 1-2 0v-5zM10.5 2a1 1 0 0 1 2 0v6.5a1 1 0 0 1-2 0V2zM14.5 3.5a1 1 0 0 1 2 0v5a1 1 0 0 1-2 0v-5z"
+            fill="currentColor" />
+          <path d="M4.5 8.5A1 1 0 0 1 5.5 7.5h13a1 1 0 0 1 1 1v3a7 7 0 0 1-7 7h-1a7 7 0 0 1-7-7V8.5z"
+            fill="currentColor" opacity="0.4" />
+          <path d="M9 17.5v3M15 17.5v3M7 20.5h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+        </svg>
         <span>SAA<span class="logo-accent">RAM</span></span>
       </a>
       <ul class="nav-links" id="navLinks">
+        <li><a href="#demo">Demo</a></li>
         <li><a href="#features">Features</a></li>
         <li><a href="#how-it-works">How It Works</a></li>
         <li><a href="#tech-stack">Tech Stack</a></li>
-        <li><a href="#demo">Demo</a></li>
       </ul>
       <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
         <span></span>
@@ -34,13 +43,14 @@
     </div>
   </nav>
 
-  <!-- ═══════ HERO ═══════ -->
+  <!-- Hero -->
   <section class="hero" id="hero">
     <canvas id="particles-canvas"></canvas>
     <div class="container hero-content">
       <div class="hero-text">
         <div class="hero-badge">
-          <span>🚀</span> AI-Powered Communication
+          <span class="badge-dot"></span>
+          AI-Powered Communication
         </div>
         <h1 class="hero-title">
           <span class="line-1">SAARAM</span>
@@ -51,18 +61,20 @@
           speech synthesis, and intelligent NLP — all powered by deep learning.
         </p>
         <div class="hero-actions">
-          <a href="#features" class="btn btn-primary">Explore Features ↓</a>
-          <a href="#demo" class="btn btn-outline">View Demo</a>
+          <a href="#demo" class="btn btn-primary">See It in Action</a>
+          <a href="#features" class="btn btn-outline">Explore Features</a>
         </div>
         <div class="hero-stats">
           <div class="hero-stat">
             <span class="hero-stat-value" data-count="26">0</span>
-            <span class="hero-stat-label">ISL Signs</span>
+            <span class="hero-stat-label">ASL Signs</span>
           </div>
+          <div class="hero-stat-divider"></div>
           <div class="hero-stat">
             <span class="hero-stat-value" data-count="7">0</span>
             <span class="hero-stat-label">Emotions</span>
           </div>
+          <div class="hero-stat-divider"></div>
           <div class="hero-stat">
             <span class="hero-stat-value" data-count="95" data-suffix="%">0</span>
             <span class="hero-stat-label">Accuracy</span>
@@ -71,117 +83,220 @@
       </div>
       <div class="hero-visual">
         <div class="hero-image-wrapper">
-          <img src="assets/hero.png" alt="SAARAM – Sign language recognition illustration" />
+          <img src="assets/hero.png" alt="SAARAM sign language recognition illustration" />
           <div class="hero-glow-ring"></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══════ FEATURES ═══════ -->
+  <!-- Demo -->
+  <section class="demo" id="demo">
+    <div class="container">
+      <div class="demo-header reveal">
+        <span class="section-label">Live Preview</span>
+        <h2 class="section-title">Watch It Work</h2>
+        <p class="section-subtitle">
+          A real-time simulation of the SAARAM pipeline — sign a letter, detect emotion, speak the result.
+        </p>
+      </div>
+
+      <div class="demo-ui reveal">
+
+        <!-- Camera feed panel -->
+        <div class="demo-feed">
+          <div class="demo-feed-inner">
+            <svg class="demo-feed-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="14" width="56" height="38" rx="7" stroke="currentColor" stroke-width="2" opacity="0.35" />
+              <circle cx="32" cy="33" r="11" stroke="currentColor" stroke-width="2" opacity="0.45" />
+              <circle cx="32" cy="33" r="4" fill="currentColor" opacity="0.3" />
+              <path d="M24 14v-3a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v3" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" />
+            </svg>
+            <p class="demo-feed-label">Camera Feed</p>
+            <p class="demo-feed-sub">Hand Tracking Active</p>
+          </div>
+          <div class="demo-live-badge">
+            <span class="demo-live-dot"></span> LIVE
+          </div>
+        </div>
+
+        <!-- Right column: data outputs -->
+        <div class="demo-outputs">
+
+          <!-- Detected letter -->
+          <div class="demo-card">
+            <span class="demo-card-label">Detected Letter</span>
+            <span class="demo-letter" id="demoLetter">H</span>
+          </div>
+
+          <!-- Emotion -->
+          <div class="demo-card">
+            <span class="demo-card-label">Emotion Detected</span>
+            <div class="demo-emotion-row">
+              <div class="demo-emotion-indicator happy"></div>
+              <span class="demo-emotion-name">Happy</span>
+            </div>
+            <div class="demo-emotion-bar">
+              <div class="demo-emotion-fill"></div>
+            </div>
+          </div>
+
+          <!-- Output sentence -->
+          <div class="demo-card demo-card-sentence">
+            <span class="demo-card-label">Output Sentence</span>
+            <p class="demo-sentence" id="demoSentence">Hello world<span class="cursor"></span></p>
+            <div class="demo-actions">
+              <button class="demo-btn demo-btn-speak">Speak</button>
+              <button class="demo-btn demo-btn-nlp">NLP Correct</button>
+              <button class="demo-btn demo-btn-clear">Clear</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
   <section class="features" id="features">
     <div class="container">
       <div class="features-header reveal">
-        <span class="section-badge">✦ Core Capabilities</span>
-        <h2 class="section-title">Powerful Features</h2>
+        <span class="section-label">Core Capabilities</span>
+        <h2 class="section-title">What SAARAM Does</h2>
         <p class="section-subtitle">
           Four interconnected AI modules working together to deliver seamless
           sign-language-to-speech translation.
         </p>
       </div>
       <div class="features-grid">
-        <!-- Card 1 -->
+
         <div class="feature-card reveal">
-          <div class="feature-icon purple">🤲</div>
+          <div class="feature-icon purple">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M7 3a1 1 0 0 1 2 0v4a1 1 0 0 1-2 0V3zM11 2a1 1 0 0 1 2 0v5a1 1 0 0 1-2 0V2zM15 3a1 1 0 0 1 2 0v4a1 1 0 0 1-2 0V3z"
+                fill="currentColor" />
+              <path d="M5 7h14v4a7 7 0 0 1-7 7h0a7 7 0 0 1-7-7V7z" fill="currentColor" opacity="0.35" />
+            </svg>
+          </div>
+          <span class="feature-tag">Module 01</span>
           <h3 class="feature-title">Real-Time Sign Recognition</h3>
           <p class="feature-desc">
-            Hand tracking via MediaPipe combined with a custom CNN trained on ISL A–Z gestures for accurate, real-time letter detection.
+            Hand tracking via MediaPipe combined with a custom CNN trained on ISL A–Z gestures for accurate, real-time
+            letter detection.
           </p>
         </div>
-        <!-- Card 2 -->
+
         <div class="feature-card reveal">
-          <div class="feature-icon cyan">😊</div>
+          <div class="feature-icon cyan">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="10" r="5" fill="currentColor" opacity="0.35" />
+              <path d="M12 5C9.24 5 7 7.24 7 10s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"
+                fill="currentColor" />
+              <path d="M8 15l-2 4M16 15l2 4M10 19h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+          </div>
+          <span class="feature-tag">Module 02</span>
           <h3 class="feature-title">Emotion Detection</h3>
           <p class="feature-desc">
-            Facial expression analysis using a FER2013-trained convolutional neural network that classifies 7 distinct emotions.
+            Facial expression analysis using a FER2013-trained convolutional neural network that classifies 7 distinct
+            emotions.
           </p>
         </div>
-        <!-- Card 3 -->
+
         <div class="feature-card reveal">
-          <div class="feature-icon magenta">✨</div>
+          <div class="feature-icon magenta">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 5h16M4 9h12M4 13h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              <circle cx="18" cy="16" r="3" fill="currentColor" opacity="0.35" stroke="currentColor"
+                stroke-width="1.5" />
+              <path d="M20.5 18.5l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+          </div>
+          <span class="feature-tag">Module 03</span>
           <h3 class="feature-title">Intelligent NLP</h3>
           <p class="feature-desc">
-            Auto-correction of signed abbreviations into grammatically perfect sentences using spell-check and language models.
+            Auto-correction of signed abbreviations into grammatically perfect sentences using spell-check and language
+            models.
           </p>
         </div>
-        <!-- Card 4 -->
+
         <div class="feature-card reveal">
-          <div class="feature-icon green">🗣️</div>
+          <div class="feature-icon green">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 9a3 3 0 1 1 6 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              <path d="M6.3 16.9A7 7 0 1 1 17.7 16.9" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              <path d="M3 20.1A11 11 0 1 1 21 20.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                opacity="0.4" />
+            </svg>
+          </div>
+          <span class="feature-tag">Module 04</span>
           <h3 class="feature-title">Emotion-Aware TTS</h3>
           <p class="feature-desc">
-            Voice output that dynamically adapts pitch, rate and tone based on the detected facial expression for natural-sounding speech.
+            Voice output that dynamically adapts pitch, rate and tone based on the detected facial expression for
+            natural-sounding speech.
           </p>
         </div>
+
       </div>
     </div>
   </section>
 
-  <!-- ═══════ HOW IT WORKS ═══════ -->
+  <!-- How It Works -->
   <section class="how-it-works" id="how-it-works">
     <div class="container">
       <div class="how-header reveal">
-        <span class="section-badge">⚡ Pipeline</span>
+        <span class="section-label">Pipeline</span>
         <h2 class="section-title">How It Works</h2>
         <p class="section-subtitle">
-          A streamlined four-step pipeline from gesture to spoken word.
+          A streamlined four-step pipeline — from a hand gesture to a spoken sentence.
         </p>
       </div>
       <div class="steps-container">
-        <!-- Step 1 -->
+
         <div class="step-card step-1 reveal">
           <div class="step-number">01</div>
-          <span class="step-emoji">✋</span>
           <h3 class="step-title">Sign a Letter</h3>
           <p class="step-desc">
             Hold up an ISL hand sign in front of the webcam. MediaPipe tracks 21 hand landmarks in real time.
           </p>
         </div>
-        <!-- Step 2 -->
+
         <div class="step-card step-2 reveal">
           <div class="step-number">02</div>
-          <span class="step-emoji">🧠</span>
           <h3 class="step-title">CNN Detection</h3>
           <p class="step-desc">
-            The custom-trained convolutional neural network classifies the detected hand pose into one of 26 ISL letters.
+            The custom-trained convolutional neural network classifies the detected hand pose into one of 26 ISL
+            letters.
           </p>
         </div>
-        <!-- Step 3 -->
+
         <div class="step-card step-3 reveal">
           <div class="step-number">03</div>
-          <span class="step-emoji">💬</span>
           <h3 class="step-title">NLP Correction</h3>
           <p class="step-desc">
             Accumulated letters are processed by the NLP module — spell-checked and formed into coherent sentences.
           </p>
         </div>
-        <!-- Step 4 -->
+
         <div class="step-card step-4 reveal">
           <div class="step-number">04</div>
-          <span class="step-emoji">🔊</span>
           <h3 class="step-title">Speak Output</h3>
           <p class="step-desc">
             The emotion-aware TTS engine speaks the corrected sentence with the tone matching your facial expression.
           </p>
         </div>
+
       </div>
     </div>
   </section>
 
-  <!-- ═══════ TECH STACK ═══════ -->
+  <!-- Tech Stack -->
   <section class="tech-stack" id="tech-stack">
     <div class="container">
       <div class="tech-header reveal">
-        <span class="section-badge">🛠 Built With</span>
+        <span class="section-label">Built With</span>
         <h2 class="section-title">Tech Stack</h2>
         <p class="section-subtitle">
           An ensemble of cutting-edge Python libraries and deep learning frameworks.
@@ -189,128 +304,82 @@
       </div>
       <div class="tech-grid">
         <div class="tech-card reveal">
-          <div class="tech-icon">🐍</div>
+          <div class="tech-abbr">Py</div>
           <span class="tech-name">Python</span>
           <span class="tech-tag">Language</span>
         </div>
         <div class="tech-card reveal">
-          <div class="tech-icon">🧠</div>
+          <div class="tech-abbr">TF</div>
           <span class="tech-name">TensorFlow</span>
           <span class="tech-tag">Deep Learning</span>
         </div>
         <div class="tech-card reveal">
-          <div class="tech-icon">📷</div>
+          <div class="tech-abbr">CV</div>
           <span class="tech-name">OpenCV</span>
           <span class="tech-tag">Computer Vision</span>
         </div>
         <div class="tech-card reveal">
-          <div class="tech-icon">🖐️</div>
+          <div class="tech-abbr">MP</div>
           <span class="tech-name">MediaPipe</span>
           <span class="tech-tag">Hand Tracking</span>
         </div>
         <div class="tech-card reveal">
-          <div class="tech-icon">🖥️</div>
+          <div class="tech-abbr">CTk</div>
           <span class="tech-name">CustomTkinter</span>
           <span class="tech-tag">Desktop GUI</span>
         </div>
         <div class="tech-card reveal">
-          <div class="tech-icon">📝</div>
+          <div class="tech-abbr">SC</div>
           <span class="tech-name">PySpellChecker</span>
           <span class="tech-tag">NLP</span>
         </div>
         <div class="tech-card reveal">
-          <div class="tech-icon">🗣️</div>
-          <span class="tech-name">PyTTSx3</span>
+          <div class="tech-abbr">TTS</div>
+          <span class="tech-name">pyttsx3</span>
           <span class="tech-tag">Text-to-Speech</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══════ DEMO ═══════ -->
-  <section class="demo" id="demo">
-    <div class="container">
-      <div class="demo-header reveal">
-        <span class="section-badge">👁 Preview</span>
-        <h2 class="section-title">Live Demo Preview</h2>
-        <p class="section-subtitle">
-          A simulated snapshot of the SAARAM desktop application in action.
-        </p>
-      </div>
-      <div class="demo-showcase reveal">
-        <!-- Title bar -->
-        <div class="demo-titlebar">
-          <span class="demo-dot red"></span>
-          <span class="demo-dot yellow"></span>
-          <span class="demo-dot green"></span>
-          <span class="demo-titlebar-text">saaram — app_gui.py</span>
-        </div>
-        <!-- Body -->
-        <div class="demo-body">
-          <div class="demo-camera">
-            <div class="demo-camera-placeholder">
-              <span class="demo-camera-icon">📹</span>
-              <span class="demo-camera-label">Camera Feed — Hand Tracking Active</span>
-            </div>
-            <div class="demo-live-badge">
-              <span class="demo-live-dot"></span> LIVE
-            </div>
-          </div>
-          <div class="demo-panels">
-            <div class="demo-panel">
-              <div class="demo-panel-title">Detected Letter</div>
-              <span class="demo-letter" id="demoLetter">H</span>
-            </div>
-            <div class="demo-panel">
-              <div class="demo-panel-title">Emotion</div>
-              <div class="demo-emotion-row">
-                <span class="demo-emotion-emoji">😊</span>
-                <span class="demo-emotion-name">Happy</span>
-              </div>
-              <div class="demo-emotion-bar"><div class="demo-emotion-fill"></div></div>
-            </div>
-            <div class="demo-panel">
-              <div class="demo-panel-title">Output Sentence</div>
-              <p class="demo-sentence" id="demoSentence">Hello world<span class="cursor"></span></p>
-            </div>
-          </div>
-        </div>
-        <!-- Actions -->
-        <div class="demo-actions">
-          <button class="demo-btn demo-btn-speak">🔊 Speak</button>
-          <button class="demo-btn demo-btn-nlp">✨ NLP Correct</button>
-          <button class="demo-btn demo-btn-clear">🗑 Clear</button>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ═══════ FOOTER ═══════ -->
+
+  <!-- Footer -->
   <footer class="footer" id="footer">
     <div class="container footer-content">
       <div class="footer-logo">
-        <span>🤟</span>
+        <svg class="footer-logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M7 3a1 1 0 0 1 2 0v5a1 1 0 0 1-2 0V3zM11 2a1 1 0 0 1 2 0v6a1 1 0 0 1-2 0V2zM15 3a1 1 0 0 1 2 0v5a1 1 0 0 1-2 0V3z"
+            fill="currentColor" />
+          <path d="M5 7h14v4a7 7 0 0 1-7 7h0a7 7 0 0 1-7-7V7z" fill="currentColor" opacity="0.35" />
+        </svg>
         <span>SAA<span class="gradient-text">RAM</span></span>
       </div>
       <p class="footer-tagline">
-        Bridging Communication Through Sign Language &amp; Emotion Recognition — 
-        an AI project built with ❤️.
+        Bridging communication through sign language and emotion recognition — an AI project built with care.
       </p>
       <ul class="footer-links">
+        <li><a href="#demo">Demo</a></li>
         <li><a href="#features">Features</a></li>
         <li><a href="#how-it-works">How It Works</a></li>
         <li><a href="#tech-stack">Tech Stack</a></li>
-        <li><a href="#demo">Demo</a></li>
-        <li><a href="#hero">Back to Top ↑</a></li>
+        <li><a href="#hero">Back to Top</a></li>
       </ul>
       <div class="footer-divider"></div>
       <p class="footer-bottom">© 2026 SAARAM. All rights reserved.</p>
     </div>
   </footer>
 
-  <!-- Back to Top -->
-  <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+  <!-- Back to top button -->
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round" />
+    </svg>
+  </button>
 
   <script src="index.js"></script>
 </body>
+
 </html>
